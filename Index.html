@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Modern Mom — Org Chart &amp; Priorities</title>
+<style>
+  :root{
+    --ivory:#F6F1E7;
+    --card:#FFFDF8;
+    --ink:#2A2521;
+    --ink-soft:#5B5148;
+    --taupe:#8B7355;
+    --taupe-line:#D8CBB8;
+    --brown-deep:#5C4A3A;
+    --clay:#9C5B3C;
+    --olive:#6B7353;
+    --gold:#B8903F;
+    --stitch:#C9BBA3;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--ivory);
+    background-image:
+      radial-gradient(ellipse at top left, rgba(184,144,63,0.06), transparent 55%),
+      radial-gradient(ellipse at bottom right, rgba(107,115,83,0.05), transparent 55%);
+    color:var(--ink);
+    font-family: "Avenir Next", "Century Gothic", "Segoe UI", system-ui, -apple-system, sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1220px;margin:0 auto;padding:56px 32px 90px;}
+  @media(max-width:980px){.wrap{padding:36px 18px 60px;}}
+
+  /* ---------- Header ---------- */
+  .eyebrow{
+    font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--taupe); font-weight:600; margin-bottom:14px;
+  }
+  h1{
+    font-family: Iowan Old Style, "Palatino Linotype", Palatino, Georgia, serif;
+    font-weight:600; font-size:42px; letter-spacing:.01em; margin:0 0 10px;
+    color:var(--brown-deep);
+  }
+  .sub{color:var(--ink-soft); font-size:15.5px; max-width:780px; margin:0 0 6px;}
+  .meta{color:var(--taupe); font-size:12.5px; margin-top:18px;}
+  header{border-bottom:1px solid var(--taupe-line); padding-bottom:28px; margin-bottom:44px;}
+
+  /* ---------- Section labels ---------- */
+  .section-head{display:flex; align-items:baseline; gap:14px; margin:0 0 6px;}
+  .section-num{
+    font-family: Iowan Old Style, Georgia, serif; font-style:italic;
+    color:var(--gold); font-size:15px; font-weight:600;
+  }
+  h2{
+    font-family: Iowan Old Style, "Palatino Linotype", Palatino, Georgia, serif;
+    font-size:25px; margin:0; color:var(--brown-deep); font-weight:600;
+  }
+  .section-note{color:var(--ink-soft); font-size:13.5px; max-width:840px; margin:8px 0 26px;}
+  section{margin-bottom:64px;}
+
+  /* ---------- Legend ---------- */
+  .legend{display:flex; flex-wrap:wrap; gap:16px 26px; margin:0 0 22px; padding:14px 18px; background:rgba(255,255,255,0.5); border:1px solid var(--taupe-line); border-radius:6px;}
+  .legend-item{display:flex; align-items:center; gap:8px; font-size:11.5px; color:var(--ink-soft);}
+  .swatch{width:16px; height:16px; border-radius:3px; flex-shrink:0;}
+  .swatch.solid{background:var(--card); border:1.5px solid var(--taupe);}
+  .swatch.dashed-gold{background:var(--card); border:1.5px dashed var(--gold);}
+  .swatch.dashed-clay{background:var(--card); border:1.5px dashed var(--clay);}
+  .swatch.pill-review{background:var(--card); border:1.5px solid var(--gold);}
+
+  /* ---------- Pending-input banner ---------- */
+  .pending{
+    background:rgba(107,115,83,0.08); border:1px solid var(--taupe-line); border-left:4px solid var(--olive);
+    border-radius:4px; padding:14px 18px; font-size:12.5px; color:var(--ink-soft); margin-bottom:30px;
+    display:flex; gap:10px; align-items:flex-start;
+  }
+  .pending b{color:var(--brown-deep);}
+
+  /* ---------- Org chart scaffolding ---------- */
+  .umbrella{
+    max-width:480px; margin:0 auto 0; background:var(--brown-deep); color:#F6F1E7;
+    border-radius:8px; padding:22px 28px; text-align:center; position:relative;
+    box-shadow:0 10px 24px -12px rgba(42,37,33,0.45);
+  }
+  .umbrella .tag-name{font-family:Iowan Old Style, Georgia, serif; font-size:22px; font-weight:600; letter-spacing:.01em;}
+  .umbrella .tag-sub{font-size:12px; color:#D8CBB8; margin-top:4px; letter-spacing:.03em; text-transform:uppercase;}
+  .umbrella .chips{display:flex; gap:8px; justify-content:center; margin-top:14px; flex-wrap:wrap;}
+  .umbrella .chip{background:rgba(246,241,231,0.14); border:1px solid rgba(246,241,231,0.35); border-radius:20px; padding:5px 12px; font-size:12px;}
+
+  .trunk{width:1px; height:26px; background:var(--taupe-line); margin:0 auto;}
+  .spine{position:relative; height:1px; background:var(--taupe-line); margin:0 auto 26px; max-width:1140px;}
+
+  .branch-label{
+    text-align:center; font-size:11.5px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--taupe); font-weight:700; margin:8px 0 4px;
+  }
+  .branch-desc{text-align:center; font-size:12.5px; color:var(--ink-soft); max-width:680px; margin:0 auto 22px;}
+
+  .lanes-row{display:grid; grid-template-columns:repeat(3, 1fr); gap:22px; margin-bottom:22px; align-items:start;}
+  .lanes-row.auto-fit{grid-template-columns:repeat(auto-fit, minmax(280px,1fr));}
+  @media(max-width:760px){.lanes-row{grid-template-columns:1fr;}}
+  @media(min-width:761px) and (max-width:980px){.lanes-row{gap:14px;}
+    .lane-box{padding:14px;}
+    .area{padding:10px 12px;}
+  }
+
+  .lane-box{
+    position:relative; background:rgba(255,255,255,0.45); border:1.5px solid var(--taupe-line);
+    border-radius:8px; padding:20px;
+  }
+  .lane-box::before{
+    content:""; position:absolute; top:-27px; left:50%; transform:translateX(-50%);
+    width:1px; height:26px; background:var(--taupe-line);
+  }
+  .lane-box.gap{border-style:dashed; border-color:var(--clay);}
+  .lane-box.pre{border-style:dashed; border-color:var(--gold);}
+
+  .lane-head{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:6px;}
+  .lane-title{font-family:Iowan Old Style, Georgia, serif; font-weight:600; font-size:19px; color:var(--brown-deep);}
+  .lane-caption{font-size:12px; color:var(--ink-soft); margin-bottom:14px;}
+  .lane-caption i{color:var(--taupe);}
+
+  .pill{
+    font-size:10px; font-weight:700; letter-spacing:.04em; padding:3px 8px; border-radius:20px;
+    color:#fff; flex-shrink:0; white-space:nowrap; margin-top:2px;
+  }
+  .pill.review{background:transparent; border:1.3px solid var(--gold); color:#8a6a1f;}
+  .pill.pre{background:var(--gold); color:#3a2f18;}
+  .pill.gap{background:transparent; border:1.3px solid var(--clay); color:var(--clay);}
+  .pill.new{background:var(--olive);}
+
+  /* areas within a lane */
+  .areas{display:grid; gap:14px; align-items:start;}
+  .areas.cols-4{grid-template-columns:repeat(4,1fr);}
+  .areas.cols-3{grid-template-columns:repeat(3,1fr);}
+  .areas.cols-2{grid-template-columns:repeat(2,1fr);}
+  @media(max-width:900px){.areas.cols-4{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:700px){.areas.cols-4, .areas.cols-3, .areas.cols-2{grid-template-columns:1fr;}}
+
+  .area{background:var(--card); border:1px solid var(--taupe-line); border-radius:6px; padding:14px 16px;}
+  .area.gap{border-style:dashed; border-color:var(--clay);}
+  .area-name{font-weight:700; font-size:13.5px; color:var(--brown-deep); margin-bottom:6px;}
+  .area-price{font-size:11px; color:var(--ink-soft); margin-bottom:8px;}
+  .people-row{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;}
+  .avatar{
+    width:25px; height:25px; border-radius:50%; background:var(--taupe);
+    color:#fff; font-size:9.5px; font-weight:700; display:flex; align-items:center; justify-content:center;
+    border:2px solid var(--card); box-shadow:0 0 0 1px var(--taupe-line);
+  }
+  .avatar.new-person{background:var(--olive);}
+  .avatar.sub{background:transparent; border:1.5px dashed var(--gold); color:var(--gold);}
+  .no-staff{font-size:11px; color:var(--clay); font-style:italic; margin-bottom:8px;}
+  .load{font-size:11.5px; color:var(--ink-soft); padding-top:8px; border-top:1px dashed var(--stitch);}
+  .load b{color:var(--brown-deep); font-size:14px; font-family:Iowan Old Style, Georgia, serif;}
+  .load .permo{color:var(--olive); font-weight:700;}
+  .load .warn{color:var(--clay); font-weight:700;}
+  .load.none{font-style:italic; color:var(--clay); border-top:1px dashed var(--stitch);}
+
+  /* single-area lane (no sub-grid, content directly in lane box) */
+  .lane-direct .people-row{margin-top:2px;}
+  .lane-direct .area-price{margin-bottom:10px;}
+
+  /* Territories block inside The Modern Mom lane */
+  .territories{margin-top:16px; padding-top:16px; border-top:1px dashed var(--stitch);}
+  .territories-label{font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--taupe); font-weight:700; margin-bottom:10px;}
+  .terr-row{display:grid; grid-template-columns:repeat(2,1fr); gap:14px;}
+  @media(max-width:700px){.terr-row{grid-template-columns:1fr;}}
+  .terr-card{background:var(--card); border:1px solid var(--taupe-line); border-radius:6px; padding:12px 14px;}
+  .terr-card.expand{border-style:dashed; border-color:var(--olive);}
+  .terr-card.plan{border-style:dashed; border-color:var(--taupe);}
+  .lane-territory{font-size:10.5px; color:var(--taupe); font-style:italic; margin:-4px 0 12px;}
+  .terr-name{font-weight:700; font-size:12.5px; color:var(--brown-deep); display:flex; justify-content:space-between; align-items:center; gap:8px;}
+  .terr-note{font-size:11px; color:var(--ink-soft); margin-top:5px;}
+  .terr-note.terr-pending{color:var(--olive); font-style:italic;}
+
+  .unassigned{background:rgba(255,255,255,0.35); border:1.5px dashed var(--taupe-line); border-radius:8px; padding:18px 20px; margin-top:6px;}
+  .unassigned h3{font-family:Iowan Old Style, Georgia, serif; font-size:15px; color:var(--brown-deep); margin:0 0 10px;}
+  .unassigned .urow{display:flex; justify-content:space-between; gap:12px; font-size:12px; color:var(--ink-soft); padding:8px 0; border-top:1px dashed var(--stitch);}
+  .unassigned .urow:first-of-type{border-top:none;}
+  .unassigned .urow b{color:var(--ink);}
+
+  /* ---------- Priorities section ---------- */
+  .priority-list{display:flex; flex-direction:column; gap:14px;}
+  .prow{
+    display:grid; grid-template-columns:56px 1fr auto; gap:18px; align-items:center;
+    background:var(--card); border:1.5px solid var(--taupe-line); border-radius:6px;
+    padding:16px 20px;
+  }
+  .prow .rank{text-align:center;}
+  .prow .rank-inner{font-family:Iowan Old Style, Georgia, serif; font-size:26px; color:transparent; -webkit-text-stroke:1.4px var(--gold); font-weight:700;}
+  .ptitle{font-weight:700; font-size:15px; color:var(--brown-deep); margin-bottom:3px;}
+  .prationale{font-size:12.5px; color:var(--ink-soft); max-width:680px;}
+  .ptags{display:flex; gap:8px; flex-direction:column; align-items:flex-end;}
+  .tier-badge{font-size:10px; font-weight:700; letter-spacing:.04em; padding:4px 10px; border-radius:20px; color:#fff; white-space:nowrap;}
+  .tier-badge.critical{background:var(--clay);}
+  .tier-badge.high{background:var(--gold); color:#3a2f18;}
+  .tier-badge.medium{background:var(--taupe);}
+  .resource-tag{font-size:10.5px; color:var(--ink-soft); background:var(--ivory); border:1px solid var(--taupe-line); padding:3px 9px; border-radius:20px; white-space:nowrap;}
+
+  .callout{
+    background:rgba(184,144,63,0.09); border:1px solid var(--taupe-line); border-left:4px solid var(--gold);
+    border-radius:4px; padding:14px 18px; font-size:12.5px; color:var(--ink-soft); margin-bottom:20px;
+  }
+  .callout b{color:var(--brown-deep);}
+
+  .crosscheck{
+    background:rgba(107,115,83,0.07); border:1px solid var(--taupe-line); border-left:4px solid var(--olive);
+    border-radius:4px; padding:14px 18px; margin-bottom:30px;
+  }
+  .crosscheck-title{font-size:12.5px; font-weight:700; color:var(--brown-deep); margin-bottom:8px;}
+  .crosscheck ul{margin:0; padding-left:18px;}
+  .crosscheck li{font-size:12px; color:var(--ink-soft); margin-bottom:5px;}
+  .crosscheck li b{color:var(--ink);}
+
+  .owner-tag{font-size:10px; color:#4a5a34; background:rgba(107,115,83,0.14); border:1px solid var(--olive); padding:3px 9px; border-radius:20px; white-space:nowrap; font-weight:700; letter-spacing:.03em;}
+
+  footer{border-top:1px solid var(--taupe-line); padding-top:22px; font-size:11.5px; color:var(--taupe); line-height:1.7;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">The Modern Mom · Internal Working Document</div>
+    <h1>Org Chart &amp; Priorities</h1>
+    <p class="sub">How the business is organized today — business lines separated from operations, who does the work, and current load — so we can see where staffing is solid and where it's thin, plus a draft ranking of what needs attention next.</p>
+    <div class="meta">Draft for owner review · Updated August 19, 2026 · Companion to the Business Structure &amp; Growth Plan workbook</div>
+  </header>
+
+  <div class="callout">
+    <b>How to read this:</b> Solid boxes are active, staffed. Dashed <b style="color:#9C5B3C;">rust</b> boxes flag a resourcing gap — real, active work with no dedicated person yet. Dashed <b style="color:#B8903F;">gold</b> boxes are pre-launch/concept, not operating yet. A gold-outline "Entity review" tag means the <i>legal</i> structure (separate business vs. part of the umbrella) is still an open question for a CPA/attorney — it doesn't mean the lane itself is uncertain. Load figures are job counts, not dollars — revenue is intentionally left off until real financials exist.
+  </div>
+
+  <div class="pending">
+    <span>⏳</span>
+    <div><b>Waiting on Lisa:</b> financial statements, and details on the Southern FL team. This page will be updated once those come in.</div>
+  </div>
+
+  <section>
+    <div class="section-head"><span class="section-num">01</span><h2>Org chart — lanes, people &amp; load</h2></div>
+    <p class="section-note">Extracted from owner messages (Aug 2026), the published pricing page, and the Service Volume Data tab. Business lines (revenue-generating) are separated from operations &amp; corporate support below. "Load" = Jan–Jul 2026 job count ÷ headcount ÷ 7 months — a rough per-person signal only, not an official staffing calculation.</p>
+
+    <div class="legend">
+      <div class="legend-item"><span class="swatch solid"></span> Active, staffed</div>
+      <div class="legend-item"><span class="swatch dashed-clay"></span> Active — resourcing gap (unstaffed)</div>
+      <div class="legend-item"><span class="swatch dashed-gold"></span> Pre-launch / concept, no team</div>
+      <div class="legend-item"><span class="swatch pill-review"></span> Entity structure under legal/CPA review</div>
+    </div>
+
+    <div class="umbrella">
+      <div class="tag-name">The Modern Mom LLC</div>
+      <div class="tag-sub">Umbrella entity · Ponte Vedra, FL</div>
+      <div class="chips">
+        <span class="chip">Lisa Calle — CEO / Owner</span>
+      </div>
+    </div>
+    <div class="trunk"></div>
+    <div class="spine"></div>
+    <div class="branch-label">Business Lines</div>
+    <div class="branch-desc">Revenue-generating service lanes.</div>
+
+    <!-- Row A: The Modern Mom lane (flagship, 3 areas + territories) -->
+    <div class="lanes-row" style="grid-template-columns:1fr;">
+      <div class="lane-box">
+        <div class="lane-head">
+          <div class="lane-title">The Modern Mom</div>
+        </div>
+        <div class="lane-caption">Core household-support lane — <i>weekly resets, organizing/decluttering, meals, and moving support.</i></div>
+        <div class="lane-territory">Territory: Ponte Vedra &amp; surrounding areas, expanding to Southern FL (see Territories below)</div>
+        <div class="areas cols-4">
+
+          <div class="area">
+            <div class="area-name">Weekly Home Resets &amp; Household Support</div>
+            <div class="area-price">$45/hr, 2-hr min — includes weekly laundry/tidy-up</div>
+            <div class="people-row">
+              <div class="avatar">AG</div><div class="avatar">DR</div><div class="avatar">GC</div>
+              <div class="avatar">HS</div><div class="avatar">JM</div><div class="avatar">MM</div>
+            </div>
+            <div class="load">6 people · <b>728</b> jobs Jan–Jul &nbsp;<span class="permo">↑13.9% YoY</span> &nbsp;<span class="permo">≈17/mo per person</span></div>
+            <div class="terr-note" style="margin-top:8px;">Goal: ~100/mo by end of 2026 — already at pace.</div>
+          </div>
+
+          <div class="area">
+            <div class="area-name">Organizing &amp; Decluttering</div>
+            <div class="area-price">$299+</div>
+            <div class="people-row">
+              <div class="avatar">KS</div><div class="avatar">TA</div>
+            </div>
+            <div class="load">2 people · <b>101</b> jobs Jan–Jul &nbsp;<span class="warn">↓10.6% YoY</span> &nbsp;<span class="permo">≈7/mo per person</span></div>
+          </div>
+
+          <div class="area">
+            <div class="area-name">Meal Preparation &amp; Grocery Support</div>
+            <div class="area-price">$50/meal, 3-meal min</div>
+            <div class="people-row"><div class="avatar">RH</div></div>
+            <div class="load">Raquel Hubley · <b>153</b> jobs Jan–Jul &nbsp;<span class="permo">↑~200% YoY</span> &nbsp;<span class="warn">≈22/mo — highest solo load in the business</span></div>
+            <div class="terr-note" style="margin-top:8px;">Highest solo load in the business — worth watching.</div>
+          </div>
+
+          <div class="area">
+            <div class="area-name">Moving &amp; Home Setup Support</div>
+            <div class="area-price">$299 first 4 hrs + $75/hr after</div>
+            <div class="people-row"><div class="avatar">KS</div><div class="avatar">TA</div></div>
+            <div class="load">Covered by the Organizing team, not a dedicated role · <b>10</b> jobs Jan–Jul &nbsp;<span class="permo">↑25.0% YoY</span></div>
+          </div>
+
+        </div>
+
+        <div class="territories">
+          <div class="territories-label">Territories</div>
+          <div class="terr-row">
+            <div class="terr-card expand">
+              <div class="terr-name">Ponte Vedra &amp; Surrounding Areas <span style="font-weight:400;color:var(--ink-soft);font-size:10.5px;">— home base</span></div>
+              <div class="terr-note">Team as shown in the four areas above.</div>
+              <div class="terr-note" style="margin-top:8px;"><b>Expanding within this region:</b> Jax Beach North, led by <b>Beth Ann</b>. <span class="pill new" style="margin-left:2px;">NEW</span></div>
+              <div class="terr-note terr-pending">Rest of the Northern FL team, and which services are live there, not yet documented here.</div>
+            </div>
+            <div class="terr-card plan">
+              <div class="terr-name">Southern FL <span class="owner-tag">OWNER PRIORITY</span></div>
+              <div class="terr-note">On Lisa's priority list (~1 month ago): "Grow Southern FL."</div>
+              <div class="terr-note terr-pending">Someone is already active there — full details (who, team size, which services are live) are still pending from Lisa.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row B: Modern Dad, Modern Teen, Modern DIY -->
+    <div class="lanes-row">
+
+      <div class="lane-box">
+        <div class="lane-head">
+          <div class="lane-title">Modern Dad</div>
+          <span class="pill review">ENTITY REVIEW</span>
+        </div>
+        <div class="lane-caption">Its own lane since 2025, led by Scott Garrett.</div>
+        <div class="lane-territory">Territory: Ponte Vedra &amp; surrounding areas</div>
+        <div class="areas cols-2">
+          <div class="area">
+            <div class="area-name">Handyman</div>
+            <div class="area-price">$85/hr (larger projects quoted)</div>
+            <div class="people-row"><div class="avatar">SG</div><div class="avatar">FE</div></div>
+          </div>
+          <div class="area">
+            <div class="area-name">Home Improvement Projects</div>
+            <div class="area-price">Pricing not itemized separately</div>
+            <div class="people-row"><div class="avatar">SG</div><div class="avatar">FE</div></div>
+            <div class="terr-note" style="margin-top:8px;font-weight:700;color:var(--taupe);">Large-project subcontractors</div>
+            <div class="people-row" style="margin-top:6px;"><div class="avatar sub">OS</div><div class="avatar sub">BR</div></div>
+            <div class="terr-note">Oscar (paint), Bruno</div>
+          </div>
+        </div>
+        <div class="load" style="margin-top:12px;">Team of 2 covers both areas (not split in volume data) · <b>174</b> jobs Jan–Jul, up from 0 in the same months last year &nbsp;<span class="permo">≈12/mo per person</span></div>
+      </div>
+
+      <div class="lane-box pre">
+        <div class="lane-head"><div class="lane-title">Modern Teen</div><span class="pill new">STARTED — TESTING</span></div>
+        <div class="lane-caption">Helping families turn unused items into value while giving teens real-world entrepreneurship experience.</div>
+        <div class="lane-territory">Territory: Ponte Vedra &amp; surrounding areas</div>
+        <div class="no-staff">Brand new — started, currently testing out the concept. No team identified yet.</div>
+        <div class="load none">No volume tracked yet</div>
+      </div>
+
+      <div class="lane-box pre">
+        <div class="lane-head"><div class="lane-title">Modern DIY</div><span class="pill pre">PRE-LAUNCH</span></div>
+        <div class="lane-caption">Guided, personalized recommendations, product lists, and step-by-step plans for a family's home, lifestyle, and budget.</div>
+        <div class="lane-territory">Planned territory: National</div>
+        <div class="no-staff">Concept only — not yet launched. No team yet.</div>
+        <div class="load none">Not applicable — pre-launch</div>
+      </div>
+
+    </div>
+
+    <div class="unassigned">
+      <h3>Not yet placed in a lane</h3>
+      <div class="urow"><span>Helping Hands — <b>$100 / 2 hrs</b></span><span>Not among the original 8 lines of business; worth confirming whether it's its own lane or part of The Modern Mom.</span></div>
+      <div class="urow"><span>Costco / Big Box Hauls — <b>$199 / 4 hrs</b></span><span>Same — worth confirming whether it rolls into Moving Support or stands alone.</span></div>
+    </div>
+
+    <div class="trunk" style="margin-top:36px;"></div>
+    <div class="branch-label">Operations &amp; Corporate Support</div>
+    <div class="branch-desc">Functions that make the business lines possible. Marketing/Affiliate is revenue-adjacent but sits here — it isn't a service line itself.</div>
+
+    <div class="lanes-row">
+
+      <div class="lane-box lane-direct">
+        <div class="lane-head"><div class="lane-title">Office Manager / Ops</div></div>
+        <div class="lane-caption">Day-to-day administration &amp; operations.</div>
+        <div class="people-row"><div class="avatar">KN</div></div>
+        <div class="load none">Kristen Nazario</div>
+      </div>
+
+      <div class="lane-box lane-direct">
+        <div class="lane-head"><div class="lane-title">Business Development</div></div>
+        <div class="lane-caption">Local networking events are the primary business-development activity today.</div>
+        <div class="people-row">
+          <div class="avatar">KN</div><div class="avatar">SG</div><div class="avatar new-person">BA</div>
+        </div>
+        <div class="load none">Kristen Nazario, Scott Garrett, Beth Ann — attend networking events (each also has a primary role above)</div>
+      </div>
+
+      <div class="lane-box gap">
+        <div class="lane-head"><div class="lane-title">Marketing — Affiliate &amp; Social Media</div><span class="pill gap">GAP</span></div>
+        <div class="lane-caption">Amazon Associates live a few weeks; social growth is an explicit goal. On Lisa's priority list (~1 month ago) as "Focus on Social Media" — marked in progress there.</div>
+        <div class="no-staff">No dedicated person identified — no one currently owns this day-to-day.</div>
+        <div class="load none">Not in the Jan–Jul volume tracking (not a service line)</div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <section>
+    <div class="section-head"><span class="section-num">02</span><h2>Priorities &amp; resources needed</h2></div>
+    <p class="section-note">Drafted using general small-business best practice — foundational financial/legal footing first, then brand protection and the systems bottlenecks already slowing day-to-day work, then growth initiatives. This is a starting point for the owner to reorder based on real-world urgency, budget, and time.</p>
+
+    <div class="priority-list">
+
+      <div class="prow">
+        <div class="rank"><span class="rank-inner">1</span></div>
+        <div>
+          <div class="ptitle">Get real financial statements in place</div>
+          <div class="prationale">Nothing downstream — tax/entity decisions, lender or investor conversations, revenue-mix tracking, even judging whether the doubling-volume goal is healthy — can be answered without a P&amp;L, balance sheet, and basic bookkeeping. Lisa is gathering these now.</div>
+        </div>
+        <div class="ptags"><span class="tier-badge critical">Critical · Now</span><span class="resource-tag">Bookkeeper / fractional CPA</span></div>
+      </div>
+
+      <div class="prow">
+        <div class="rank"><span class="rank-inner">2</span></div>
+        <div>
+          <div class="ptitle">Resolve tax &amp; entity structure questions</div>
+          <div class="prationale">LLC vs. S-corp election, whether Modern Dad/Teen/DIY become separate entities under the umbrella, employing Lisa's kids &amp; Roth IRAs, and the company-vehicle / personal-vehicle-sale questions. These decisions shape how trademarks and contracts should be filed, so they belong ahead of #3.</div>
+        </div>
+        <div class="ptags"><span class="tier-badge critical">Critical · Now</span><span class="resource-tag">CPA + business attorney</span></div>
+      </div>
+
+      <div class="prow">
+        <div class="rank"><span class="rank-inner">3</span></div>
+        <div>
+          <div class="ptitle">Protect the brand names — trademark filings</div>
+          <div class="prationale">The Modern Mom, Modern Mom, Modern Dad, Modern Teen, and Modern DIY are all in public use with no protection. Risk grows the longer this waits; ideally files under whatever entity structure #2 settles on.</div>
+        </div>
+        <div class="ptags"><span class="tier-badge high">High</span><span class="resource-tag">IP / trademark attorney</span></div>
+      </div>
+
+      <div class="prow">
+        <div class="rank"><span class="rank-inner">4</span></div>
+        <div>
+          <div class="ptitle">Decide on themodernmom.com and related domains</div>
+          <div class="prationale">themodernmom.com is currently for sale at $5K, plus the Modern Dad / Teen / DIY domains — a time-boxed, use-it-or-lose-it decision. Low complexity, but needs an explicit budget call soon.</div>
+        </div>
+        <div class="ptags"><span class="tier-badge high">High · Time-boxed</span><span class="resource-tag">Owner budget decision</span></div>
+      </div>
+
+      <div class="prow">
+        <div class="rank"><span class="rank-inner">5</span></div>
+        <div>
+          <div class="ptitle">Name an owner for Marketing — Affiliate &amp; Social Media</div>
+          <div class="prationale">Amazon Associates is live and social growth is an explicit goal, but no one currently owns this day-to-day.</div>
+        </div>
+        <div class="ptags"><span class="tier-badge high">High</span><span class="resource-tag">Staffing decision</span></div>
+      </div>
+
+      <div class="prow">
+        <div class="rank"><span class="rank-inner">6</span></div>
+        <div>
+          <div class="ptitle">Fix contractor hour-tracking &amp; payroll workflow</div>
+          <div class="prationale">A live bottleneck — manual hour submission/approval and manual revenue/labor reporting slow invoicing and payroll accuracy today. A contractor has already offered to help build a fix.</div>
+        </div>
+        <div class="ptags"><span class="tier-badge high">High</span><span class="resource-tag">Developer / Jobber consultant</span></div>
+      </div>
+
+      <div class="prow">
+        <div class="rank"><span class="rank-inner">7</span></div>
+        <div>
+          <div class="ptitle">Grow Weekly Home Resets volume</div>
+          <div class="prationale">One of Lisa's stated priorities — reach 100 jobs/month by end of year. Current pace (~104/mo, Jan–Jul) is already there; a separate, more recently stated goal to double the 2025 monthly average (~186/mo) is also on record. Worth confirming which target is active and what further growth would take — likely additional reset specialists.</div>
+        </div>
+        <div class="ptags"><span class="owner-tag">OWNER PRIORITY</span><span class="tier-badge medium">Medium</span><span class="resource-tag">Staffing / capacity planning</span></div>
+      </div>
+
+      <div class="prow">
+        <div class="rank"><span class="rank-inner">8</span></div>
+        <div>
+          <div class="ptitle">Define a Southern FL growth plan</div>
+          <div class="prationale">One of Lisa's stated priorities. Someone is already active in Southern FL, but the full picture — who, team size, which services are live — isn't confirmed yet. Worth getting those details from Lisa and turning this into a real growth plan.</div>
+        </div>
+        <div class="ptags"><span class="owner-tag">OWNER PRIORITY</span><span class="tier-badge medium">Medium</span><span class="resource-tag">Owner + ops planning time</span></div>
+      </div>
+
+      <div class="prow">
+        <div class="rank"><span class="rank-inner">9</span></div>
+        <div>
+          <div class="ptitle">Decide next steps for Modern DIY</div>
+          <div class="prationale">Still concept-only with no team. Needs a scoping decision (green-light, timeline, or shelve) rather than sitting open-ended.</div>
+        </div>
+        <div class="ptags"><span class="tier-badge medium">Medium</span><span class="resource-tag">Owner + ops planning time</span></div>
+      </div>
+
+      <div class="prow">
+        <div class="rank"><span class="rank-inner">10</span></div>
+        <div>
+          <div class="ptitle">Continue franchise-readiness documentation</div>
+          <div class="prationale">SOW documentation is already underway and is the right long-term growth lever. Best sequenced after entity structure, staffing, and financials are settled.</div>
+        </div>
+        <div class="ptags"><span class="tier-badge medium">Medium</span><span class="resource-tag">Internal ops + franchise attorney (later)</span></div>
+      </div>
+
+      <div class="prow">
+        <div class="rank"><span class="rank-inner">11</span></div>
+        <div>
+          <div class="ptitle">Redesign the website</div>
+          <div class="prationale">Worth sequencing after the brand/entity structure and trademark questions are resolved, so the site reflects a settled structure rather than one that may change.</div>
+        </div>
+        <div class="ptags"><span class="tier-badge medium">Medium-Low</span><span class="resource-tag">Web designer / developer</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    Sources: owner messages received Aug 2026 (roster, systems, pricing, strategic initiatives, tech pain points, trademark/domain notes, org-structure corrections, Jax Beach North territory); Lisa's priority list (shared with Kristen ~1 month before this page; surfaced to the assistant 2026-08-19); The Modern Mom — Website Development Onboarding Questionnaire; Service Volume Data (owner's operations report, Jan–Jul 2026 vs. 2025); published pricing page.<br>
+    This page shows headcount and job-volume load, not revenue — no dollar or size estimates are included because financial statements are not yet available; Lisa is gathering these along with details on the Northern FL team. All facts here are also reflected in the Business Structure &amp; Growth Plan workbook where noted; this page does not itself change or replace that workbook.<br>
+    Draft for review — nothing here is a legal, tax, or entity-structure recommendation. "Entity review" and "gap" flags mark open questions, not decisions.
+  </footer>
+
+</div>
+</body>
+</html>
